@@ -333,7 +333,16 @@ export default function POSPage() {
         <div 
           className={`cart-panel${mobileCartOpen ? ' open-mobile' : ''}`}
           style={{ 
-            display: (windowWidth <= 1024 && !mobileCartOpen) ? 'none' : undefined 
+            display: (windowWidth <= 1024 && !mobileCartOpen) ? 'none' : undefined,
+            ...(windowWidth <= 1024 && mobileCartOpen ? {
+              position: 'fixed',
+              top: 0, left: 0, right: 0, bottom: 0,
+              height: '100vh',
+              zIndex: 1001,
+              background: 'var(--color-surface)',
+              display: 'flex',
+              flexDirection: 'column'
+            } : {})
           }}
         >
           <div className="cart-header">
