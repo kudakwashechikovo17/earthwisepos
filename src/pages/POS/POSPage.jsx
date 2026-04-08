@@ -337,7 +337,6 @@ export default function POSPage() {
             ...(windowWidth <= 1024 && mobileCartOpen ? {
               position: 'fixed',
               top: 0, left: 0, right: 0, bottom: 0,
-              height: '100vh',
               zIndex: 1001,
               background: 'var(--color-surface)',
               display: 'flex',
@@ -426,7 +425,7 @@ export default function POSPage() {
           </div>
 
           {/* Cart Footer */}
-          <div className="cart-footer">
+          <div className="cart-footer" style={{ paddingBottom: windowWidth <= 1024 ? 'max(var(--space-4), env(safe-area-inset-bottom, 40px))' : 'var(--space-4)' }}>
             <div className="cart-total-section">
               <div className="cart-total-row">
                 <span>Items</span>
