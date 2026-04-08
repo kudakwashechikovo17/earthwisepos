@@ -15,7 +15,7 @@ const NAV_ITEMS = [
   { to: '/settings', icon: Settings,        label: 'Settings',       adminOnly: true  },
 ]
 
-export default function Sidebar({ mobileOpen, onClose }) {
+export default function Sidebar({ isOpen, onClose }) {
   const { profile, signOut } = useAuth()
   const navigate = useNavigate()
 
@@ -33,13 +33,11 @@ export default function Sidebar({ mobileOpen, onClose }) {
 
   return (
     <>
-      {mobileOpen && (
-        <div
-          style={{ position:'fixed',inset:0,background:'rgba(0,0,0,0.4)',zIndex:99 }}
-          onClick={onClose}
-        />
-      )}
-      <aside className={`sidebar${mobileOpen ? ' open' : ''}`}>
+      <div
+        className={`sidebar-overlay${isOpen ? ' open' : ''}`}
+        onClick={onClose}
+      />
+      <aside className={`sidebar${isOpen ? ' open' : ' collapsed'}`}>
         {/* Logo */}
         <div className="sidebar-logo">
           <div className="sidebar-logo-icon">

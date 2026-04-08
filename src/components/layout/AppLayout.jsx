@@ -5,7 +5,7 @@ import { useAuth } from '../../context/AuthContext'
 
 export default function AppLayout() {
   const { user, loading } = useAuth()
-  const [mobileOpen, setMobileOpen] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth > 768)
 
   if (loading) {
     return (
@@ -20,9 +20,9 @@ export default function AppLayout() {
 
   return (
     <div className="app-shell">
-      <Sidebar mobileOpen={mobileOpen} onClose={() => setMobileOpen(false)} />
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="main-area">
-        <Outlet context={{ toggleMobile: () => setMobileOpen(o => !o) }} />
+        <Outlet context={{ toggleMobile: () => setSidebarOpen(o => !o) }} />
       </div>
     </div>
   )
