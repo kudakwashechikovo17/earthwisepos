@@ -318,7 +318,13 @@ export default function POSPage() {
               </button>
             </div>
           </div>
-
+          
+          <div className="mobile-cart-close" style={{ padding: '12px 16px', background: '#fef2f2', borderBottom: '1px solid #fecaca', borderTop: '1px solid var(--color-border)' }}>
+            <button className="btn btn-red btn-block" style={{ fontSize: '1rem', padding: '12px', fontWeight: 700 }} onClick={() => setMobileCartOpen(false)}>
+              ✕ Hide Cart & View Products
+            </button>
+          </div>
+          
           <div className="cart-items">
             {cart.length === 0 ? (
               <div className="cart-empty">
