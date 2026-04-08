@@ -55,10 +55,26 @@ export default function SalesHistoryPage() {
   }
 
   const markRefunded = async (saleId) => {
+    // 1. Mark sale as refunded
     await supabase.from('sales').update({ status:'refunded' }).eq('id', saleId)
+
+    // 2. Automatically restore stock by inserting offset movements
+    const restoringMovements = items.map(item => ({
+      product_id: item.product_id,
+      movement_type: 'in',
+      quantity: item.quantity,
+      reference_type: 'refund',
+      reference_id: saleId,
+      created_at: new Date().toISOString()
+    }))
+
+    if (restoringMovements.length > 0) {
+      await supabase.from('stock_movements').insert(restoringMovements)
+    }
+
     setSales(prev => prev.filter(s => s.id !== saleId))
     setDetail(null)
-    addToast('Sale marked as refunded', 'warning')
+    addToast('Sale refunded and stock automatically restored! ✓', 'success')
   }
 
   const totalSales = sales.reduce((s, x) => s + Number(x.total_amount), 0)

@@ -18,6 +18,8 @@ export default function StockPage() {
   const [movements, setMovements]   = useState([])
   const [panel, setPanel]           = useState(false)
   const [form, setForm]             = useState(EMPTY_FORM)
+  const [adjustModal, setAdjustModal] = useState(false)
+  const [adjustForm, setAdjustForm]   = useState({ product_id: '', new_total_quantity: '', reason: 'correction' })
   const [saving, setSaving]         = useState(false)
   const [loading, setLoading]       = useState(true)
 
@@ -74,7 +76,34 @@ export default function StockPage() {
     setSaving(false)
   }
 
+  const adjustStock = async () => {
+    if (!adjustForm.product_id || adjustForm.new_total_quantity === '') { addToast('Select product and enter new quantity', 'error'); return }
+    setSaving(true)
+    const newQty = parseFloat(adjustForm.new_total_quantity)
+    const currentQty = stockLevels[adjustForm.product_id] || 0
+    const difference = newQty - currentQty
+
+    if (difference !== 0) {
+      await supabase.from('stock_movements').insert({
+        product_id: adjustForm.product_id,
+        movement_type: difference > 0 ? 'in' : 'out',
+        quantity: Math.abs(difference),
+        reference_type: adjustForm.reason,
+        created_at: new Date().toISOString()
+      })
+      addToast(`Stock adjusted successfully (${difference > 0 ? '+' : ''}${difference})!`, 'success')
+      fetchAll()
+    } else {
+      addToast('Quantity matches current stock exactly', 'info')
+    }
+    
+    setAdjustModal(false)
+    setAdjustForm({ product_id: '', new_total_quantity: '', reason: 'correction' })
+    setSaving(false)
+  }
+
   const field = (key, val) => setForm(f => ({ ...f, [key]: val }))
+  const adjustField = (key, val) => setAdjustForm(f => ({ ...f, [key]: val }))
 
   const getProduct = (id) => products.find(p => p.id === id)
 
@@ -88,9 +117,14 @@ export default function StockPage() {
             <p className="page-sub">Track your inventory levels</p>
           </div>
           {isAdmin && (
-            <button className="btn btn-primary" onClick={() => setPanel(true)}>
-              <Plus size={15} /> Add Stock
-            </button>
+            <div style={{ display:'flex', gap:8 }}>
+              <button className="btn btn-outline" onClick={() => setAdjustModal(true)}>
+                <AlertTriangle size={15} /> Adjust Stock
+              </button>
+              <button className="btn btn-primary" onClick={() => setPanel(true)}>
+                <Plus size={15} /> Add Stock
+              </button>
+            </div>
           )}
         </div>
 
@@ -220,6 +254,64 @@ export default function StockPage() {
             </div>
           </div>
         </>
+      )}
+
+      {/* ── Adjust Stock Modal ── */}
+      {adjustModal && (
+        <div className="modal-overlay" onClick={() => setAdjustModal(false)}>
+          <div className="modal modal-sm" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <span className="modal-title">Adjust Current Stock</span>
+              <button className="btn btn-ghost btn-icon" onClick={() => setAdjustModal(false)}><X size={18} /></button>
+            </div>
+            <div className="modal-body">
+              <div className="form-group">
+                <label className="form-label">Product</label>
+                <select className="form-control" value={adjustForm.product_id} onChange={e=>adjustField('product_id',e.target.value)}>
+                  <option value="">Select product…</option>
+                  {products.map(p => <option key={p.id} value={p.id}>{p.name} (Current: {stockLevels[p.id]||0} {p.unit_type})</option>)}
+                </select>
+              </div>
+              
+              <div className="form-group">
+                <label className="form-label">New ACTUAL Total Quantity</label>
+                <div style={{ display:'flex', alignItems:'center', gap:'var(--space-2)' }}>
+                  <input 
+                    className="form-control" 
+                    type="number" 
+                    value={adjustForm.new_total_quantity} 
+                    onChange={e=>adjustField('new_total_quantity',e.target.value)} 
+                    placeholder="Count the freezer..." 
+                  />
+                  {adjustForm.product_id && (
+                    <span style={{ fontWeight:700, color:'var(--color-text-muted)' }}>
+                      {getProduct(adjustForm.product_id)?.unit_type}
+                    </span>
+                  )}
+                </div>
+                <div style={{ marginTop:'var(--space-2)', fontSize:'0.75rem', color:'var(--color-text-muted)' }}>
+                  The system perfectly calculates and inserts the +/- difference for your accountant's audit trail!
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Reason for Adjustment</label>
+                <select className="form-control" value={adjustForm.reason} onChange={e=>adjustField('reason',e.target.value)}>
+                  <option value="correction">Inventory Correction (Count Mismatch)</option>
+                  <option value="spoiled">Spoiled / Damaged Product</option>
+                  <option value="lost">Lost / Stolen</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-outline" onClick={() => setAdjustModal(false)} disabled={saving}>Cancel</button>
+              <button className="btn btn-primary" onClick={adjustStock} disabled={saving}>
+                {saving ? <><div className="spinner" /> Saving…</> : 'Save Adjustment'}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </>
   )
