@@ -225,9 +225,15 @@ export default function POSPage() {
         )}
       </Header>
 
-      <div className="pos-layout">
+      <div 
+        className="pos-layout"
+        style={{
+          display: windowWidth <= 1024 ? 'block' : 'grid',
+          gridTemplateColumns: windowWidth <= 1024 ? 'none' : '1fr 380px'
+        }}
+      >
         {/* ── LEFT: Products ── */}
-        <div className="pos-products">
+        <div className="pos-products" style={{ width: '100%' }}>
           {/* Toolbar */}
           <div className="pos-toolbar">
             <div className="search-bar" style={{ maxWidth: '100%' }}>
