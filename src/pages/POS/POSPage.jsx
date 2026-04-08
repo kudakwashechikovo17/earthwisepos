@@ -337,7 +337,7 @@ export default function POSPage() {
             ...(windowWidth <= 1024 && mobileCartOpen ? {
               position: 'fixed',
               top: 0, left: 0, right: 0, bottom: 0,
-              zIndex: 1001,
+              zIndex: 990,
               background: 'var(--color-surface)',
               display: 'flex',
               flexDirection: 'column'
@@ -451,8 +451,7 @@ export default function POSPage() {
                 disabled={cart.length === 0}
                 onClick={() => { setPayMethod('cash'); setCustomDate(''); setPayModal(true) }}
               >
-                <span style={{ fontSize:'1.25rem' }}>💵</span>
-                <span>CASH</span>
+                <div style={{ fontSize:'1.75rem', fontWeight: 900 }}>CASH</div>
                 <span className="pay-btn-label">Pay with Cash</span>
               </button>
               <button
@@ -460,8 +459,7 @@ export default function POSPage() {
                 disabled={cart.length === 0}
                 onClick={() => { setPayMethod('momo'); setCustomDate(''); setPayModal(true) }}
               >
-                <span style={{ fontSize:'1.25rem' }}>📱</span>
-                <span>MoMo</span>
+                <div style={{ fontSize:'1.75rem', fontWeight: 900 }}>MoMo</div>
                 <span className="pay-btn-label">Mobile Money</span>
               </button>
             </div>
