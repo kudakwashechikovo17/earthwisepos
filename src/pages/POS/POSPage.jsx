@@ -30,6 +30,7 @@ export default function POSPage() {
   const [payMethod, setPayMethod]       = useState('cash')
   const [saving, setSaving]             = useState(false)
   const [customDate, setCustomDate]     = useState('')
+  const [mobileCartOpen, setMobileCartOpen] = useState(false)
 
   // Receipt modal
   const [receiptModal, setReceiptModal] = useState(null) // completed sale
@@ -134,6 +135,7 @@ export default function POSPage() {
     const held = { id: Date.now(), items: cart, note, heldAt: new Date().toISOString() }
     setHeldSales(prev => [...prev, held])
     clearCart()
+    setMobileCartOpen(false)
     addToast('Sale held successfully', 'info')
   }
 
@@ -201,6 +203,7 @@ export default function POSPage() {
     clearCart()
     setSaving(false)
     setPayModal(false)
+    setMobileCartOpen(false)
     addToast('Sale completed! ✓', 'success')
   }
 
@@ -285,21 +288,35 @@ export default function POSPage() {
               ))}
             </div>
           )}
+          
+          {/* Floating Checkout Button (Mobile Only) */}
+          <button className="mobile-cart-toggle" onClick={() => setMobileCartOpen(true)}>
+            <div style={{ display:'flex', alignItems:'center', gap:8, color: '#fff' }}>
+              <ShoppingCart size={18} />
+              <span style={{ fontWeight:700 }}>{itemCount} item{itemCount !== 1 ? 's' : ''}</span>
+            </div>
+            <span style={{ fontWeight:800, color: '#fff' }}>{formatRWF(cartTotal)}</span>
+          </button>
         </div>
 
         {/* ── RIGHT: Cart ── */}
-        <div className="cart-panel">
+        <div className={`cart-panel${mobileCartOpen ? ' open-mobile' : ''}`}>
           <div className="cart-header">
             <span className="cart-title">
               <ShoppingCart size={18} style={{ display:'inline', marginRight:6, verticalAlign:'middle' }} />
               Current Sale
               {cart.length > 0 && <span className="badge badge-primary" style={{ marginLeft:8 }}>{cart.length}</span>}
             </span>
-            {cart.length > 0 && (
-              <button className="btn btn-ghost btn-sm btn-icon" onClick={clearCart} title="Clear cart">
-                <Trash2 size={15} style={{ color:'var(--color-red)' }} />
+            <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+              {cart.length > 0 && (
+                <button className="btn btn-ghost btn-sm btn-icon" onClick={clearCart} title="Clear cart">
+                  <Trash2 size={15} style={{ color:'var(--color-red)' }} />
+                </button>
+              )}
+              <button className="btn btn-ghost btn-sm btn-icon mobile-cart-close" onClick={() => setMobileCartOpen(false)}>
+                <X size={20} />
               </button>
-            )}
+            </div>
           </div>
 
           <div className="cart-items">
