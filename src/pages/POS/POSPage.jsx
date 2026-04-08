@@ -31,6 +31,13 @@ export default function POSPage() {
   const [saving, setSaving]             = useState(false)
   const [customDate, setCustomDate]     = useState('')
   const [mobileCartOpen, setMobileCartOpen] = useState(false)
+  const [windowWidth, setWindowWidth]   = useState(window.innerWidth)
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   // Receipt modal
   const [receiptModal, setReceiptModal] = useState(null) // completed sale
@@ -300,7 +307,12 @@ export default function POSPage() {
         </div>
 
         {/* ── RIGHT: Cart ── */}
-        <div className={`cart-panel${mobileCartOpen ? ' open-mobile' : ''}`}>
+        <div 
+          className={`cart-panel${mobileCartOpen ? ' open-mobile' : ''}`}
+          style={{ 
+            display: (windowWidth <= 1024 && !mobileCartOpen) ? 'none' : undefined 
+          }}
+        >
           <div className="cart-header">
             <span className="cart-title">
               <ShoppingCart size={18} style={{ display:'inline', marginRight:6, verticalAlign:'middle' }} />
