@@ -303,7 +303,24 @@ export default function POSPage() {
           )}
           
           {/* Floating Checkout Button (Mobile Only) */}
-          <button className="mobile-cart-toggle" onClick={() => setMobileCartOpen(true)}>
+          <button 
+            className="mobile-cart-toggle" 
+            onClick={() => setMobileCartOpen(true)}
+            style={{ 
+              display: windowWidth <= 1024 ? 'flex' : 'none',
+              position: 'fixed', 
+              bottom: 'var(--space-4)', 
+              left: 'var(--space-4)', 
+              right: 'var(--space-4)',
+              zIndex: 900,
+              justifyContent: 'space-between',
+              padding: 'var(--space-4) var(--space-5)',
+              borderRadius: 'var(--radius-full)',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.25)',
+              fontSize: 'var(--font-size-md)',
+              background: 'var(--color-primary)'
+            }}
+          >
             <div style={{ display:'flex', alignItems:'center', gap:8, color: '#fff' }}>
               <ShoppingCart size={18} />
               <span style={{ fontWeight:700 }}>{itemCount} item{itemCount !== 1 ? 's' : ''}</span>
