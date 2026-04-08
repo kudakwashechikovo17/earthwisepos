@@ -1099,19 +1099,13 @@ textarea.form-control { resize: vertical; min-height: 80px; }
 }
 
 /* --- Responsive --- */
-@media (max-width: 1024px) {
-  :root { --sidebar-width: 200px; }
-  .pos-layout { grid-template-columns: 1fr 340px; }
-  .stats-grid-3 { grid-template-columns: repeat(3, 1fr); }
-  .charts-grid { grid-template-columns: 1fr; }
-  .charts-grid-2 { grid-template-columns: 1fr; }
-}
+/* Responsive layout updates */
 .mobile-menu-btn { display: flex; } /* always visible globally */
 
 .mobile-cart-toggle { display: none; }
 .mobile-cart-close { display: none; }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   :root { --sidebar-width: 0px; }
   
   /* Layout Headers */
@@ -1168,6 +1162,7 @@ textarea.form-control { resize: vertical; min-height: 80px; }
     z-index: 1001;
     border-left: none;
     border-top: none;
+    background: var(--color-surface);
     animation: slide-up 0.2s ease;
   }
   .cart-panel.open-mobile { display: flex; flex-direction: column; }
